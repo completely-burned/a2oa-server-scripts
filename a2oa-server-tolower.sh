@@ -27,7 +27,8 @@ for DIR in $(find ./ -type d); do
 	fi
 done
 
-for FILE in $(find ./ -type f ! -path "./ACR/*" ! -path "./PMC/*" ! -path "./BAF/*" ! -path "./DLCsetup/*" ! -path "./DirectX/*" ! -path "./BEsetup/*"); do
+for FILE in $(find ./ -type f ! -path "./ACR/*" ! -path "./PMC/*" ! -path "./BAF/*" ! -path "./DirectX/*" ! -path "./BEsetup/*")
+do
 
 	if [ ! -f ${SERVERPATH}/ca/${FILE,,} ] && [ ! -L ${SERVERPATH}/ca/${FILE,,} ] ; then
 		ln -snf ${ARMA2STEAMPATH}/${FILE} ${SERVERPATH}/ca/${FILE,,}
@@ -48,7 +49,8 @@ for DIR in $(find ./ -type d); do
 	fi
 done
 
-for FILE in $(find ./ -type f ! -path "./_ACR/*" ! -path "./_PMC/*" ! -path "./_BAF/*" ! -path "./DLCsetup/*" ! -path "./DirectX/*" ! -path "./BEsetup/*"); do
+for FILE in $(find ./ -type f ! -path "./ACR/*" ! -path "./PMC/*" ! -path "./BAF/*" ! -path "./DirectX/*" ! -path "./BEsetup/*")
+do
 
 	if [ ! -f ${SERVERPATH}${FILE,,} ] && [ ! -L ${SERVERPATH}/${FILE,,} ] ; then
 		ln -snf ${ARMA2OASTEAMPATH}/${FILE} ${SERVERPATH}/${FILE,,}
@@ -60,33 +62,31 @@ done
 ########################################
 #####          ACR
 ########################################
+echo "ACR: ACRlite"
 
-ACR_SRC=${ARMA2OASTEAMPATH}/DLCsetup/0ACRlite
-ACR_INTO=${SERVERPATH}/acr/addons
+ACR_SRC=${SERVERPATH}/dlcsetup/0acrlite
+ACR_INTO=${SERVERPATH}/common
 
-cd ${ACR_SRC}
+echo "ACR: ${ACR_SRC}"
 
-for DIR in $(find ./ -type d); do
-	if [ ! -d ${ACR_INTO}/${DIR,,} ]; then
-		mkdir -p ${ACR_INTO}/${DIR,,}
+# Распаковка
+for FILE in $(find ${ACR_SRC} -type l)
+do
+	if [ ${FILE##*\.} == "xz" ]
+	then
+		echo "ACR: Распаковка ${FILE}"
+		xz -vdfk ${FILE}
 	fi
 done
 
-for FILE in $(find ./ -type f); do
+echo "ACR: ${ACR_SRC} > ${ACR_INTO}"
+echo "ACR: Добавляем лишь недостающие файлы, сообщение <<Файл существует>> можно игнорировать."
 
-	if [ ! -f ${ACR_INTO}/${FILE,,} ] && [ ! -L ${ACR_INTO}/${FILE,,} ] ; then
-		ln -snf ${ACR_SRC}/${FILE} ${ACR_INTO}/${FILE,,}
-	fi
+for FILE in $(find ${ACR_SRC} -name '*.pbo*')
+do
+	echo "ACR: ${FILE}"
+	# dir/
+	ln -s ${FILE} ${ACR_INTO}/
 done
-
-cd ${ACR_INTO}
-for FILE in $(find ./ -type l); do
-
-	if [ ${FILE##*\.} == "xz" ] ; then
-		xz -dfk ${FILE}
-	fi
-done
-
-cd "${SERVERPATH}"
 
 exit 0
