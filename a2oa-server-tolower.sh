@@ -88,7 +88,7 @@ ACR_INTO=${SERVERPATH}/common
 echo "ACR: ${ACR_SRC}"
 
 # Временная директория для распаковки.
-TMP=$(mktemp -d /tmp/a2oa-server-tolower.XXX)
+TMP=$(mktemp -t -d a2oa-server-tolower.XXX)
 echo "ACR: Временная директория для распаковки ${TMP}"
 for DIR in $(find ${ACR_SRC} -type d)
 do
