@@ -1,12 +1,12 @@
 #!/bin/bash
 ########################################
-# Скрипт создает в директории сервера символьные ссылки 
+# Скрипт создает в директории сервера символьные ссылки
 # в нижнем регистре на отсутствующие у сервера файлы игры.
 #
-# Запуск.. 
+# Запуск..
 # SERVERPATH="путь/к/серверу" ARMA2STEAMPATH="путь/к/a2" ARMA2OASTEAMPATH="путь/к/a2oa" ./a2oa-server-tolower.sh
 #
-# После обновления игры могут появиться битые ссылки 
+# После обновления игры могут появиться битые ссылки
 # на отсутствующие файлы, их нужно удалять.
 ########################################
 
@@ -31,8 +31,10 @@ ARMA2OASTEAMPATH=${ARMA2OASTEAMPATH:-"/opt/steamcmd/.steam/SteamApps/common/Arma
 
 cd ${ARMA2STEAMPATH}
 
-for DIR in $(find ./ -type d); do
-	if [ ! -d ${SERVERPATH}/ca/${DIR,,} ]; then
+for DIR in $(find ./ -type d)
+do
+	if [ ! -d ${SERVERPATH}/ca/${DIR,,} ]
+	then
 		mkdir -p ${SERVERPATH}/ca/${DIR,,}
 	fi
 done
@@ -40,7 +42,8 @@ done
 for FILE in $(find ./ -type f ! -path "./ACR/*" ! -path "./PMC/*" ! -path "./BAF/*" ! -path "./DirectX/*" ! -path "./BEsetup/*")
 do
 
-	if [ ! -f ${SERVERPATH}/ca/${FILE,,} ] && [ ! -L ${SERVERPATH}/ca/${FILE,,} ] ; then
+	if [ ! -f ${SERVERPATH}/ca/${FILE,,} ] && [ ! -L ${SERVERPATH}/ca/${FILE,,} ]
+	then
 		ln -s ${ARMA2STEAMPATH}/${FILE} ${SERVERPATH}/ca/${FILE,,}
 	fi
 done
@@ -53,8 +56,10 @@ done
 
 cd ${ARMA2OASTEAMPATH}
 
-for DIR in $(find ./ -type d); do
-	if [ ! -d ${SERVERPATH}/${DIR,,} ]; then
+for DIR in $(find ./ -type d)
+do
+	if [ ! -d ${SERVERPATH}/${DIR,,} ]
+	then
 		mkdir -p ${SERVERPATH}/${DIR,,}
 	fi
 done
@@ -62,7 +67,8 @@ done
 for FILE in $(find ./ -type f ! -path "./ACR/*" ! -path "./PMC/*" ! -path "./BAF/*" ! -path "./DirectX/*" ! -path "./BEsetup/*")
 do
 
-	if [ ! -f ${SERVERPATH}${FILE,,} ] && [ ! -L ${SERVERPATH}/${FILE,,} ] ; then
+	if [ ! -f ${SERVERPATH}${FILE,,} ] && [ ! -L ${SERVERPATH}/${FILE,,} ]
+	then
 		ln -s ${ARMA2OASTEAMPATH}/${FILE} ${SERVERPATH}/${FILE,,}
 	fi
 done
