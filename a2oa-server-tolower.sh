@@ -41,7 +41,7 @@ for FILE in $(find ./ -type f ! -path "./ACR/*" ! -path "./PMC/*" ! -path "./BAF
 do
 
 	if [ ! -f ${SERVERPATH}/ca/${FILE,,} ] && [ ! -L ${SERVERPATH}/ca/${FILE,,} ] ; then
-		ln -snf ${ARMA2STEAMPATH}/${FILE} ${SERVERPATH}/ca/${FILE,,}
+		ln -s ${ARMA2STEAMPATH}/${FILE} ${SERVERPATH}/ca/${FILE,,}
 	fi
 done
 
@@ -63,7 +63,7 @@ for FILE in $(find ./ -type f ! -path "./ACR/*" ! -path "./PMC/*" ! -path "./BAF
 do
 
 	if [ ! -f ${SERVERPATH}${FILE,,} ] && [ ! -L ${SERVERPATH}/${FILE,,} ] ; then
-		ln -snf ${ARMA2OASTEAMPATH}/${FILE} ${SERVERPATH}/${FILE,,}
+		ln -s ${ARMA2OASTEAMPATH}/${FILE} ${SERVERPATH}/${FILE,,}
 	fi
 done
 
