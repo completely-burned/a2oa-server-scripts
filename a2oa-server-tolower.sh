@@ -87,17 +87,37 @@ ACR_INTO=${SERVERPATH}/common
 
 echo "ACR: ${ACR_SRC}"
 
+# Временная директория для распаковки.
+TMP=$(mktemp -d /tmp/a2oa-server-tolower.XXX)
+echo "ACR: Временная директория для распаковки ${TMP}"
+for DIR in $(find ${ACR_SRC} -type d)
+do
+	if [ ! -d ${TMP}/${DIR} ]
+	then
+		echo "ACR: Create dir ${TMP}/${DIR}"
+		mkdir -p ${TMP}/${DIR}
+	fi
+done
+
 # Распаковка
 for FILE in $(find ${ACR_SRC} -type l)
 do
 	if [ ${FILE##*\.} == "xz" ]
 	then
-		echo "ACR: Распаковка ${FILE}"
-		xz -vdfk ${FILE}
+		echo "ACR: Create symlink ${TMP}/${FILE}"
+		ln -s ${FILE} ${TMP}/${FILE}
+		echo "ACR: Распаковка ${TMP}/${FILE}"
+		xz -vdk ${TMP}/${FILE}
+		echo "ACR: Удаление ${TMP}/${FILE}"
+		rm -v ${TMP}/${FILE}
 	fi
 done
 
-echo "ACR: ${ACR_SRC} > ${ACR_INTO}"
+echo "ACR: Копирование распакованных файлов"
+# checksum Чтобы не тревожить напрасно сервер записью.
+rsync --recursive --verbose --progress --checksum ${TMP}/ ${ACR_SRC}
+
+echo "ACR: Создаем символьные ссылки ${ACR_SRC} > ${ACR_INTO}"
 echo "ACR: Добавляем лишь недостающие файлы, сообщение <<Файл существует>> можно игнорировать."
 
 for FILE in $(find ${ACR_SRC} -name '*.pbo*')
@@ -106,5 +126,8 @@ do
 	# dir/
 	ln -s ${FILE} ${ACR_INTO}/
 done
+
+echo "Удаление ${TMP}"
+rm -rfv ${TMP}
 
 exit 0
