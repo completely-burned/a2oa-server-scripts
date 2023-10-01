@@ -1,28 +1,43 @@
 #!/bin/bash
 # Этот скрипт не гарантирует 100% работоспособности.
 
-# Заметки.
-exit 1
+IFS=$'\n'
 
 # Путь к источнику.
-IN=.
-# Путь к назначению. Необходим / в конце.
-OUT=~/a2oa-server-private/mpmissions/
+IN=/var/www/armad/multi
+# Путь к назначению.
+OUT=~/a2oa-server/mpmissions/
 
 # Карты разрешены.
-#maps=(utes Chernarus Takistan)
+MAPS="utes
+Chernarus
+Takistan
+Zargabad
+Desert_E
+ProvingGrounds_PMC
+Shapur_BAF
+Woodland_ACR
+Bootcamp_ACR
+Mountains_ACR
+FDF_Isle1_a"
 
-find ${IN} -type f -iname "*.utes.pbo" -print -exec ln -s {} ${OUT} \;
-find ${IN} -type f -iname "*.Chernarus.pbo" -print -exec ln -s {} ${OUT} \;
+# TODO: Чёрный список миссий.
+BLACKLIST="*invasion*
+*i44*
+*1944*
+"
 
-find ${IN} -type f -iname "*.Takistan.pbo" -print -exec ln -s {} ${OUT} \;
-find ${IN} -type f -iname "*.Zargabad.pbo" -print -exec ln -s {} ${OUT} \;
-find ${IN} -type f -iname "*.Desert_E.pbo" -print -exec ln -s {} ${OUT} \;
+for map in ${MAPS}
+do
+	for file in $(find ${IN} -type f -iname "*.${map}.pbo")
+	do
+		v_bn=$(basename "${file}")
+		ln -s "${file}" "${OUT}"/"${v_bn}"
+	done
 
-find ${IN} -type f -iname "*.ProvingGrounds_PMC.pbo" -print -exec ln -s {} ${OUT} \;
-
-find ${IN} -type f -iname "*.Shapur_BAF.pbo" -print -exec ln -s {} ${OUT} \;
-
-find ${IN} -type f -iname "*.Woodland_ACR.pbo" -print -exec ln -s {} ${OUT} \;
-find ${IN} -type f -iname "*.Bootcamp_ACR.pbo" -print -exec ln -s {} ${OUT} \;
-find ${IN} -type f -iname "*.Mountains_ACR.pbo" -print -exec ln -s {} ${OUT} \;
+	for dir in $(find ${IN} -type d -iname "*.${map}")
+	do
+		v_bn=$(basename "${dir}")
+		ln -s "${dir}" "${OUT}"/"${v_bn}"
+	done
+done
