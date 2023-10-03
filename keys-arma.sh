@@ -12,11 +12,13 @@ find -L . \
 		-not \( -path "*temp*" -prune \) \
 		-not \( -path "*wine*" -prune \) \
 		-not \( -path "*proton*" -prune \) \
-	\) \
-	-path '*workshop*' \
-	-path '*addon*' \
-	-path '*mod*' \
-	-path "*/steamapps/common/*" \
+	\) -and \
+	\( \
+		-path '*workshop*' -or \
+		-path '*addon*' -or \
+		-path '*mod*' -or \
+		-path "*/steamapps/common/*" \
+	\) -and \
 	\( \
 		-iname '*map*.bikey' -or \
 		-iname '*terrain*.bikey' -or \
