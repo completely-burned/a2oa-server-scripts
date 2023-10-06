@@ -48,7 +48,7 @@ fnc_port_getReNice () {
 }
 
 fnc_renice () {
-	if [[ ${renice} -ge 0 ]]
+	if [[ ${renice} -ge 5 ]]
 	then
 		chrt --pid --idle 0 ${pid}
 	else
