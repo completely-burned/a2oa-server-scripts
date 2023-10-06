@@ -45,7 +45,10 @@ do
 		# find: File system loop detected; '' is part of the same file system loop as ''
 		if [[ ! -d "${OUT}"/"${v_bn}" ]]
 		then
-			ln -sv "${dir}" "${OUT}"/"${v_bn}"
+			if [[ -n $(find ${dir} -maxdepth 1 -iname "Mission.sqm") ]]
+			then
+				ln -sv "${dir}" "${OUT}"/"${v_bn}"
+			fi
 		fi
 	done
 done
