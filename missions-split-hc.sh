@@ -29,7 +29,7 @@ do
 		fi
 	fi
 
-	if [[ $(find ${dir} -maxdepth 2 -iname "Mission.sqm" -exec grep -c -i "forceHeadlessClient" {} \;) -gt 0 ]]
+	if [[ $(find ${dir} -maxdepth 2 -type f -iname "Mission.sqm" -exec grep -c -i "forceHeadlessClient" {} \;) -gt 0 ]]
 	then
 		ln -s ${MISSIONS}/"${i}" ${MISSIONS_HC}/
 	fi

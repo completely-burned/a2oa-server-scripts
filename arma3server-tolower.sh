@@ -1,26 +1,52 @@
 #!/bin/bash
-# Скрипт создает в новой директории символьные ссылки в нижнем регистре на файлы.
 
-# Права на запуск...
-# chmod +x ~/bin/arma3server-tolower.sh
-# Запуск...
-# GAME=~/arma3 SERVER=~/arma3lower ~/bin/arma3server-tolower.sh
+#####
+# Скрипт создает в директории сервера символьные ссылки
+# в нижнем регистре на отсутствующие у сервера файлы игры.
+#
+# Запуск
+# GAME="путь/к/a2oa" SERVER="путь/к/серверу" ./arma3server-tolower.sh
+#
+# После обновления игры могут появиться битые ссылки
+# на отсутствующие файлы, их нужно удалять.
+#####
 
+IFS=$'\n'
 
-cd ${GAME}
+if cd ${GAME}
+then
+	mkdir -p ${SERVER}
 
-for DIR in $(find ./ -type d)
-do
-	if [ ! -d ${SERVER}/${DIR,,} ]
-	then
-		mkdir -p ${SERVER}/${DIR,,}
-	fi
-done
+	array=( $(find -L . -not \( -path "./steamapps/common/*" -prune \) \
+		-not \( -path "*/shadercache/*" -prune \) \
+		-not \( -path "*/steamapps/compatdata/*" -prune \) \
+		-not \( -path "*download*" -prune \) \
+		-not \( -path "*/temp/*" -prune \) \
+		-not \( -path "*/.wine/*" -prune \) \
+		-not \( -path "*/.proton/*" -prune \) \
+		-type d ) )
+	for i in "${array[@]}"
+	do
+		if [ ! -d ${SERVER}/${i,,} ]
+		then
+			mkdir ${SERVER}/${i,,}
+		fi
+	done
 
-for FILE in $(find ./ -type f ! -path "./ACR/*" ! -path "./PMC/*" ! -path "./BAF/*" ! -path "./DirectX/*" ! -path "./BEsetup/*")
-do
-	if [ ! -f ${SERVER}/${FILE,,} ] && [ ! -L ${SERVER}/${FILE,,} ]
-	then
-		ln -s ${GAME}/${FILE} ${SERVER}/${FILE,,}
-	fi
-done
+	array=( $(find -L . -not \( -path "./steamapps/common/*" -prune \) \
+		-not \( -path "*/shadercache/*" -prune \) \
+		-not \( -path "*/steamapps/compatdata/*" -prune \) \
+		-not \( -path "*download*" -prune \) \
+		-not \( -path "*/temp/*" -prune \) \
+		-not \( -path "*/.wine/*" -prune \) \
+		-not \( -path "*/.proton/*" -prune \) \
+		-not \( -iname "appmanifest*.tmp" -prune \) \
+		-type f ) )
+	for i in "${array[@]}"
+	do
+		if [ ! -f ${SERVER}/${i,,} ] && [ ! -L ${SERVER}/${i,,} ]
+		then
+			ln -s ${GAME}/${i} ${SERVER}/${i,,}
+		fi
+	done
+fi

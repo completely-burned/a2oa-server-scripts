@@ -32,12 +32,23 @@ do
 	for file in $(find ${IN} -type f -iname "*.${map}.pbo")
 	do
 		v_bn=$(basename "${file}")
-		ln -s "${file}" "${OUT}"/"${v_bn}"
+		# ln: не удалось создать символьную ссылку '': Файл существует
+		if [[ ! -f "${OUT}"/"${v_bn}" ]]
+		then
+			ln -sv "${file}" "${OUT}"/"${v_bn}"
+		fi
 	done
 
 	for dir in $(find ${IN} -type d -iname "*.${map}")
 	do
 		v_bn=$(basename "${dir}")
-		ln -s "${dir}" "${OUT}"/"${v_bn}"
+		# find: File system loop detected; '' is part of the same file system loop as ''
+		if [[ ! -d "${OUT}"/"${v_bn}" ]]
+		then
+			if [[ -n $(find ${dir} -maxdepth 1 -type f -iname "Mission.sqm") ]]
+			then
+				ln -sv "${dir}" "${OUT}"/"${v_bn}"
+			fi
+		fi
 	done
 done
