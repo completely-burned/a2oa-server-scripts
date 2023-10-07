@@ -1,5 +1,10 @@
 #!/bin/bash
 
+#####
+# Скрипт меняет приоритеты и ограничения сервера
+# в зависимости от актывных подключений.
+#####
+
 IFS=$'\n'
 
 
@@ -38,7 +43,7 @@ fnc_port_getReNice () {
 			if [[ ${difference} -gt ${bytes_idle} ]]
 			then
 				renice=${NICE_NORMAL}
-				ionice_class=${NICE_NORMAL}
+				ionice_class=${IONICE_CLASS_NORMAL}
 			else
 				renice=${NICE_LOW}
 				ionice_class=${IONICE_CLASS_LOW}
@@ -67,6 +72,22 @@ fnc_renice () {
 	done
 }
 
+fnc_headlessClient () {
+	services_children=$(find /proc/${pid}/cwd/ -type f -name "*.service" -printf "%P ")
+	for i in ${services_children}
+	do
+		if [[ ${renice} -ge 5 ]]
+		then
+			systemctl stop ${i}
+		else
+			if [[ -n $(pgrep -i steam.exe) ]]
+			then
+				systemctl start ${i}
+			fi
+		fi
+	done
+}
+
 while sleep ${sleep}
 do
 	for port in ${PORTS}
@@ -78,6 +99,7 @@ do
 			for pid in ${pids[@]}
 			do
 				fnc_renice
+				fnc_headlessClient
 			done
 		fi
 	done
