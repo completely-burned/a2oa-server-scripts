@@ -1,0 +1,18 @@
+[Unit]
+Description=Arma 3 Server %i
+After=local-fs.target
+
+[Service]
+LimitCORE=1000000
+User=steamcmd
+
+EnvironmentFile=/etc/conf.d/arma3server/common-env
+EnvironmentFile=/etc/conf.d/arma3server/server-env
+EnvironmentFile=/etc/conf.d/arma3server/%i-env
+
+WorkingDirectory=/opt/steamcmd/arma3server-%i/
+ExecStart=/opt/steamcmd/arma3server-%i/arma3server_x64 $COMMONPARAMS $SERVERPARAMS $OTHERPARAMS $PARAMS $MOD
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
